@@ -1,12 +1,25 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
+from contextlib import asynccontextmanager
+
+import database
+import models
+import schemas
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("API inciando - ", app.title)
+    yield
+    print("API finalizando - ", app.version)
 
 app = FastAPI(
-    title="Minha API Modular com APIRouter",
-    version="1.1.0",
-    description="Demonstração do uso de APIRouter para organizar endpoints."
+    lifespan=lifespan,
+    title="API OCR com FastAPI, PostgreSQL e SQLAlchemy",
+    version="1.0.0",
+    description="API para processamento OCR com armazenamento em PostgreSQL e migrações de banco de dados gerenciadas pelo Alembic."
 )
 
-@app.get("/", summary="Check if the API is running", description="This endpoint is used to check if the API is running.")
+@app.get("/", summary="Verifica se a API está em execução")
 def root_controller():
-    return {"status": "FastAPI is running"}
+    return {"status": "API FastAPI (com Alembic) está em execução!"}
 
