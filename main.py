@@ -1,12 +1,14 @@
 import logging
-from datetime import datetime
-import database
-import models
-import schemas
+# import ocr.models as models
+# import ocr.schemas as schemas
 
-from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, HTTPException, status
+from ocr import routers as ocr_routers
+from datetime import datetime
+from app.database import SessionLocal, get_db
+from contextlib import asynccontextmanager
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 
 logging.basicConfig(
     level=logging.INFO,
@@ -20,8 +22,8 @@ async def lifespan(app: FastAPI):
     logger.info(f"API iniciando - {app.title} v{app.version}")
 
     try:
-        db = database.SessionLocal()
-        db.execute("SELECT 1")
+        db = SessionLocal()
+        db.execute(text("SELECT 1"))
         db.close()
         logger.info("Conexão com o banco de dados estabelecida com sucesso")
     except Exception as e:
@@ -41,18 +43,20 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+app.include_router(ocr_routers.router, prefix="/ocr", tags=["OCR"])
+
 @app.get("/", summary="Verifica se a API está em execução")
 def root_controller():
     return {
-        "status": "API FastAPI (com Alembic) está em execução!",
+        "status": "API FastAPI está em execução!",
         "version": app.version,
         "docs": "/docs",
     }
 
 @app.get("/health", summary="Health check da aplicação")
-def health_check(db: Session = Depends(database.get_db)):
+def health_check(db: Session = Depends(get_db)):
     try:
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {
             "status": "healthy",
             "database": "connected",
