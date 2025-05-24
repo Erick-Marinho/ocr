@@ -18,7 +18,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 class Base(DeclarativeBase):
     pass
 
-def get_db():
+# Provider de sessão do banco de dados
+def get_db_session():
     db = SessionLocal()
     try:
         yield db
