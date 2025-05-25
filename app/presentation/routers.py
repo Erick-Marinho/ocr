@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from app.application.service import OcrService
 from app.presentation.schemas import OcrResultCreate, OcrResultResponse
-from app.infrastructure.dependencies import get_ocr_service
+from app.infrastructure.di.dependencies import get_ocr_service
 
 router = APIRouter()
 

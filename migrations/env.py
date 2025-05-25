@@ -10,7 +10,7 @@ from alembic import context
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from ocr.models import Base
+from app.infrastructure.database.orm import OcrResult
 
 config = context.config
 
@@ -26,7 +26,7 @@ elif not config.get_main_option("sqlalchemy.url"):
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = Base.metadata
+target_metadata = OcrResult.metadata
 
 
 def run_migrations_offline() -> None:
